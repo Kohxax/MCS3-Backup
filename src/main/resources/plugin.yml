@@ -1,0 +1,4 @@
+name: MCS3-Backup
+version: '1.0-SNAPSHOT'
+main: dev.bokukoha.mCS3Backup.MCS3Backup
+api-version: '1.21'
