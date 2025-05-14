@@ -30,10 +30,33 @@ public class makeBackup {
     }
 
     //バックアップスケジュール作成
-    public void createBackupSchedule() {
+    private void createBackupSchedule() {
         //バックアップ時間を取得
         String backupTime = plugin.getConfig().getString("backup-time", "0 0 * * *");
 
+        //CronParserを作成
+        CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(UNIX));
+        Cron cron = parser.parse(backupTime);
+        ExecutionTime executionTime = ExecutionTime.forCron(cron);
 
+        ZonedDateTime now = ZonedDateTime.now();
+        Optional<ZonedDateTime> nextExecution = executionTime.nextExecution(now);
+
+        if (nextExecution.isEmpty()) {
+            plugin.getLogger().warning("Invalid cron expression: " + backupTime);
+            return;
+        }
+
+        long delayMillis = nextExecution.get().toInstant().toEpochMilli() - System.currentTimeMillis();
+        long IntervalMillis = 24 * 60 * 60 * 1000L;
+
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            performBackup();
+
+            createBackupSchedule();
+        }, delayMillis / 50L); // Bukkitのスケジューラはティック単位なので50で割る
+    }
+
+    private void performBackup() {
     }
 }
