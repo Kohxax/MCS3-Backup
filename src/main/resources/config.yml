@@ -1,1 +1,5 @@
 backup-time: "*/2 * * * *"
+backup-worlds:
+  - world
+  - world_nether
+  - world_the_end

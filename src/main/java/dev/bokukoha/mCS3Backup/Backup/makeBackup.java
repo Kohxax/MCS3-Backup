@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -72,35 +73,48 @@ public class makeBackup {
         plugin.getServer().broadcastMessage("§a[MCS3-Backup] ワールドのバックアップを開始します。");
         plugin.getLogger().severe("Starting backup at " + timestamp);
 
-        File zipFile = new File(backupFolder, "world-" + timestamp + ".zip");
+        //ワールドリストをconfigからリスト取得
+        List<String> worlds = plugin.getConfig().getStringList("backup-worlds");
 
-        try (FileOutputStream fos = new FileOutputStream(zipFile);
-             ZipOutputStream zos = new ZipOutputStream(fos)) {
-            Path sourcePath = worldFolder.toPath();
-            Files.walk(sourcePath).filter(Files::isRegularFile).forEach(path -> {
-                String relativePath = sourcePath.relativize(path).toString();
+        for (String worldName : worlds) {
+            File worldFolder = new File(plugin.getServer().getWorldContainer(), worldName);
 
-                // session.lockをスキップ
-                if (relativePath.equalsIgnoreCase("session.lock")) {
-                    plugin.getLogger().info("Skipping session.lock file: " + path);
-                    return;
-                }
+            if (!worldFolder.exists() || !worldFolder.isDirectory()) {
+                plugin.getLogger().warning("World folder does not exist or is not a directory: " + worldName);
+                continue;
+            }
 
-                ZipEntry zipEntry = new ZipEntry(relativePath);
-                try {
-                    zos.putNextEntry(zipEntry);
-                    Files.copy(path, zos);
-                    zos.closeEntry();
-                } catch (IOException e) {
-                    plugin.getLogger().severe("Failed to add file to backup: " + path + " - " + e.getMessage());
-                }
-            });
+            File zipFile = new File(backupFolder, worldName + "-" + timestamp + ".zip");
 
-            plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                 ZipOutputStream zos = new ZipOutputStream(fos)) {
+                Path sourcePath = worldFolder.toPath();
+                Files.walk(sourcePath).filter(Files::isRegularFile).forEach(path -> {
+                    String relativePath = sourcePath.relativize(path).toString();
 
-        } catch (Exception e) {
-            plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
-            e.printStackTrace();
+                    // session.lockをスキップ
+                    if (relativePath.equalsIgnoreCase("session.lock")) {
+                        plugin.getLogger().info("Skipping session.lock file: " + path);
+                        return;
+                    }
+
+                    ZipEntry zipEntry = new ZipEntry(relativePath);
+                    try {
+                        zos.putNextEntry(zipEntry);
+                        Files.copy(path, zos);
+                        zos.closeEntry();
+                    } catch (IOException e) {
+                        plugin.getLogger().severe("Failed to add file to backup: " + path + " - " + e.getMessage());
+                    }
+                });
+
+                plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
+                plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
+
+            } catch (Exception e) {
+                plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
