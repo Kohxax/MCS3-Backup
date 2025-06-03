@@ -6,11 +6,18 @@ import com.cronutils.model.Cron;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import com.cronutils.model.definition.CronDefinitionBuilder;
+
 import static com.cronutils.model.CronType.UNIX;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Optional;
 import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class makeBackup {
 
@@ -27,6 +34,8 @@ public class makeBackup {
         if (!backupFolder.exists()) {
             backupFolder.mkdirs();
         }
+
+        createBackupSchedule();
     }
 
     //バックアップスケジュール作成
@@ -58,5 +67,40 @@ public class makeBackup {
     }
 
     private void performBackup() {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+
+        plugin.getServer().broadcastMessage("§a[MCS3-Backup] ワールドのバックアップを開始します。");
+        plugin.getLogger().severe("Starting backup at " + timestamp);
+
+        File zipFile = new File(backupFolder, "world-" + timestamp + ".zip");
+
+        try (FileOutputStream fos = new FileOutputStream(zipFile);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+            Path sourcePath = worldFolder.toPath();
+            Files.walk(sourcePath).filter(Files::isRegularFile).forEach(path -> {
+                String relativePath = sourcePath.relativize(path).toString();
+
+                // session.lockをスキップ
+                if (relativePath.equalsIgnoreCase("session.lock")) {
+                    plugin.getLogger().info("Skipping session.lock file: " + path);
+                    return;
+                }
+
+                ZipEntry zipEntry = new ZipEntry(relativePath);
+                try {
+                    zos.putNextEntry(zipEntry);
+                    Files.copy(path, zos);
+                    zos.closeEntry();
+                } catch (IOException e) {
+                    plugin.getLogger().severe("Failed to add file to backup: " + path + " - " + e.getMessage());
+                }
+            });
+
+            plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
+
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
