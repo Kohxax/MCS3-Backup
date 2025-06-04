@@ -9,6 +9,7 @@ public final class MCS3Backup extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("MCS3Backup is now enabled!");
+        getLogger().info("Backup will be created according to the schedule via config.yml.");
 
         //デフォルトコンフィグのロード
         saveDefaultConfig();
