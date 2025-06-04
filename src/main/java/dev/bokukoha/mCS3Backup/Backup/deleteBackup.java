@@ -53,7 +53,10 @@ public class deleteBackup {
                 File oldfile = files.get(i);
 
                 // 最新のバックアップを除いて削除
-                if (i >= plugin.getConfig().getInt("keep-backups", 1)) {
+
+                int keepCount = plugin.getConfig().getInt("backup-keep-count", 1);
+
+                if (i >= keepCount) {
                     if (oldfile.delete()) {
                         plugin.getLogger().info("Deleted old backup: " + oldfile.getName());
                     } else {

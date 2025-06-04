@@ -14,7 +14,7 @@ public final class MCS3Backup extends JavaPlugin {
         //デフォルトコンフィグのロード
         saveDefaultConfig();
 
-        //バックアップの呼び出し
+        //バックアップ作成、自動削除の呼び出し
         new makeBackup(this);
     }
 

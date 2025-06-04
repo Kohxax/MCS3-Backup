@@ -3,3 +3,17 @@ backup-worlds:
   - world
   - world_nether
   - world_the_end
+backup-keep-count: 1
+
+S3:
+  enabled: false
+  bucket-name: BUCKET_NAME
+  base-path: backups
+  region: AWS_REGION
+  storage-class: YOUR_STORAGE_CLASS
+
+  user-profile: true
+  profile-name: default
+
+  access-key: YOUR_ACCESS_KEY
+  secret-access-key: YOUR_SECRET_KEY
