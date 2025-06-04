@@ -116,5 +116,8 @@ public class makeBackup {
                 e.printStackTrace();
             }
         }
+
+        // 古いバックアップを削除
+        new deleteBackup(plugin);
     }
 }

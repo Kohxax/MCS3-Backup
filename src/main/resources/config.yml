@@ -1,4 +1,4 @@
-backup-time: "*/2 * * * *"
+backup-time: "0 0 * * *"
 backup-worlds:
   - world
   - world_nether
