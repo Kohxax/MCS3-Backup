@@ -71,7 +71,7 @@ public class makeBackup {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
 
         plugin.getServer().broadcastMessage("§a[MCS3-Backup] ワールドのバックアップを開始します。");
-        plugin.getLogger().severe("Starting backup at " + timestamp);
+        plugin.getLogger().info("Starting backup at " + timestamp);
 
         //ワールドリストをconfigからリスト取得
         List<String> worlds = plugin.getConfig().getStringList("backup-worlds");
@@ -94,7 +94,6 @@ public class makeBackup {
 
                     // session.lockをスキップ
                     if (relativePath.equalsIgnoreCase("session.lock")) {
-                        plugin.getLogger().info("Skipping session.lock file: " + path);
                         return;
                     }
 
