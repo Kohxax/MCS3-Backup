@@ -36,7 +36,7 @@ public class putObject {
             return;
         }
 
-        if (bucketName == null || accessKey == null || secretKey == null) {
+        if (accessKey == null || secretKey == null) {
             logger.error("S3 configuration is missing in config.yml");
             return;
         }
