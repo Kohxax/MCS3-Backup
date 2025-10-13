@@ -52,11 +52,11 @@ public class deleteBackup {
             for (int i = 0; i < files.size(); i++) {
                 File oldfile = files.get(i);
 
-                // 最新のバックアップを除いて削除
-
+                //configから保持するバックアップの数を取得
                 int keepCount = plugin.getConfig().getInt("backup-keep-count", 1);
 
                 if (i >= keepCount) {
+                    // 最新のバックアップを除いて削除
                     if (oldfile.delete()) {
                         plugin.getLogger().info("Deleted old backup: " + oldfile.getName());
                     } else {

@@ -7,13 +7,10 @@ backup-keep-count: 1
 
 S3:
   enabled: false
-  bucket-name: BUCKET_NAME
-  base-path: backups
-  region: AWS_REGION
-  storage-class: YOUR_STORAGE_CLASS
+  bucket: "your-bucket-name"
+  region: "ap-northeast-1"
+  storage-class: "your-storage-class"
+  upload-prefix: "your-upload-prefix"
 
-  user-profile: true
-  profile-name: default
-
-  access-key: YOUR_ACCESS_KEY
-  secret-access-key: YOUR_SECRET_KEY
+  access-key: "your-access-key"
+  secret-access-key: "your-secret-access-key"

@@ -2,6 +2,8 @@ package dev.bokukoha.mCS3Backup.Backup;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import dev.bokukoha.mCS3Backup.AWS.putObject;
+
 import com.cronutils.model.Cron;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
@@ -68,10 +70,10 @@ public class makeBackup {
     }
 
     private void performBackup() {
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
 
         plugin.getServer().broadcastMessage("§a[MCS3-Backup] ワールドのバックアップを開始します。");
-        plugin.getLogger().info("Starting backup at " + timestamp);
+        plugin.getLogger().info("Starting backup at " + timeStamp);
 
         //ワールドリストをconfigからリスト取得
         List<String> worlds = plugin.getConfig().getStringList("backup-worlds");
@@ -84,7 +86,7 @@ public class makeBackup {
                 continue;
             }
 
-            File zipFile = new File(backupFolder, worldName + "-" + timestamp + ".zip");
+            File zipFile = new File(backupFolder, worldName + "-" + timeStamp + ".zip");
 
             try (FileOutputStream fos = new FileOutputStream(zipFile);
                  ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -110,13 +112,16 @@ public class makeBackup {
                 plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
                 plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
 
+                // 古いバックアップを削除
+                new deleteBackup(plugin);
+
+                //S3にputする部分
+                putObject.uploadToS3(plugin.getConfig(), "backup/" + zipFile.getName(), zipFile.toPath());
+
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-
-        // 古いバックアップを削除
-        new deleteBackup(plugin);
     }
 }

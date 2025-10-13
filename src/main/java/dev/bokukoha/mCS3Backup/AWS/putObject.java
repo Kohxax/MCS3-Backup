@@ -1,9 +1,11 @@
 package dev.bokukoha.mCS3Backup.AWS;
 
 //AWS SDK for Java v2
+import org.bukkit.configuration.file.FileConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -19,29 +21,42 @@ import java.nio.file.Path;
 public class putObject {
     public static final Logger logger = LoggerFactory.getLogger(putObject.class);
 
-    public static void uploadToS3(String bucketName, String objectKey, Path filePath) {
-        // S3クライアントを作成
-        S3Client s3 = S3Client.builder()
-                .region(Region.AP_NORTHEAST_1)
-                .credentialsProvider(ProfileCredentialsProvider.create())
-                .build();
+    public static void uploadToS3(FileConfiguration config, String objectKey, Path filePath) {
 
-        // アップロードリクエストを作成
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(objectKey)
-                .storageClass(StorageClass.DEEP_ARCHIVE)
-                .build();
+        // config.ymlから設定を取得
+        String regionName = config.getString("S3.region", "ap-northeast-1");
+        String bucketName = config.getString("S3.bucket", "your-bucket-name");
+        String storageClassName = config.getString("S3.storage-class", "STANDARD");
+        String accessKey = config.getString("S3.access-key");
+        String secretKey = config.getString("S3.secret-key");
 
-        try {
-            // ファイルをアップロード
-            PutObjectResponse response = s3.putObject(putObjectRequest, RequestBody.fromFile(filePath));
-            logger.info("File uploaded successfully. ETag: " + response.eTag());
+        if (bucketName == null || accessKey == null || secretKey == null) {
+            logger.error("S3 configuration is missing in config.yml");
+            return;
+        }
+
+        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
+        Region region = Region.of(regionName);
+
+        try (S3Client s3 = S3Client.builder()
+                .region(region)
+                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                .build()) {
+
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .storageClass(StorageClass.fromValue(storageClassName))
+                    .build();
+
+            PutObjectResponse response = s3.putObject(request, RequestBody.fromFile(filePath));
+            logger.info("File uploaded to S3 with ETag: " + response.eTag());
+
         } catch (S3Exception e) {
-            logger.error("Failed to upload file to S3: " + e.awsErrorDetails().errorMessage());
-        } finally {
-            // S3クライアントを閉じる
-            s3.close();
+            logger.error("Failed to upload to S3: " + e.awsErrorDetails().errorMessage());
+        }
+        catch (Exception e) {
+            logger.error("Unexpected error: " + e.getMessage());
         }
     }
 }
