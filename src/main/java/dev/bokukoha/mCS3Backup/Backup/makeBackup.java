@@ -78,6 +78,8 @@ public class makeBackup {
         //ワールドリストをconfigからリスト取得
         List<String> worlds = plugin.getConfig().getStringList("backup-worlds");
 
+        File latestBackup = null;
+
         for (String worldName : worlds) {
             File worldFolder = new File(plugin.getServer().getWorldContainer(), worldName);
 
@@ -109,19 +111,22 @@ public class makeBackup {
                     }
                 });
 
-                plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
-                plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
-
-                // 古いバックアップを削除
-                new deleteBackup(plugin);
-
-                //S3にputする部分
-                putObject.uploadToS3(plugin.getConfig(), "backup/" + zipFile.getName(), zipFile.toPath());
+                plugin.getLogger().info("Backup created: " + zipFile.getName());
+                latestBackup = zipFile;
 
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
                 e.printStackTrace();
             }
+
+            plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
+            plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
+
+            // 古いバックアップを削除
+            new deleteBackup(plugin);
+
+            //S3にputする部分
+            putObject.uploadToS3(plugin.getConfig(), "backup/" + zipFile.getName(), zipFile.toPath());
         }
     }
 }
