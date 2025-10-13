@@ -118,15 +118,15 @@ public class makeBackup {
                 plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
                 e.printStackTrace();
             }
-
-            plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
-            plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
-
-            // 古いバックアップを削除
-            new deleteBackup(plugin);
-
-            //S3にputする部分
-            putObject.uploadToS3(plugin.getConfig(), "backup/" + zipFile.getName(), zipFile.toPath());
         }
+
+        plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
+        plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
+
+        // 古いバックアップを削除
+        new deleteBackup(plugin);
+
+        //S3にputする部分
+        putObject.uploadToS3(plugin.getConfig(), "backup/" + zipFile.getName(), zipFile.toPath());
     }
 }
