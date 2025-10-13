@@ -111,7 +111,7 @@ public class makeBackup {
                     }
                 });
 
-                plugin.getLogger().info("Backup created: " + zipFile.getName());
+                plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
                 latestBackup = zipFile;
 
             } catch (Exception e) {
@@ -121,12 +121,11 @@ public class makeBackup {
         }
 
         plugin.getServer().broadcastMessage("§a[MCS3-Backup] バックアップが正常に完了しました。");
-        plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
 
         // 古いバックアップを削除
         new deleteBackup(plugin);
 
         //S3にputする部分
-        putObject.uploadToS3(plugin.getConfig(), "backup/" + zipFile.getName(), zipFile.toPath());
+        putObject.uploadToS3(plugin.getConfig(), "backup/" + latestBackup.getName(), latestBackup.toPath());
     }
 }
