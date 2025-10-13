@@ -24,7 +24,7 @@ public class putObject {
     public static void uploadToS3(FileConfiguration config, String objectKey, Path filePath) {
 
         // config.ymlから設定を取得
-        Boolean enableS3 = config.getBoolean("S3.enable", false);
+        Boolean enableS3 = config.getBoolean("S3.enabled", false);
         String regionName = config.getString("S3.region", "ap-northeast-1");
         String bucketName = config.getString("S3.bucket", "your-bucket-name");
         String storageClassName = config.getString("S3.storage-class", "STANDARD");
