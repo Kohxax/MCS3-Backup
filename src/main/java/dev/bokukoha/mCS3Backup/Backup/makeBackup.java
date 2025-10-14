@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -78,7 +79,7 @@ public class makeBackup {
         //ワールドリストをconfigからリスト取得
         List<String> worlds = plugin.getConfig().getStringList("backup-worlds");
 
-        File latestBackup = null;
+        List<File> createdBackups = new ArrayList<>();
 
         for (String worldName : worlds) {
             File worldFolder = new File(plugin.getServer().getWorldContainer(), worldName);
@@ -112,7 +113,7 @@ public class makeBackup {
                 });
 
                 plugin.getLogger().info("Backup completed successfully: " + worldName + "->" + zipFile.getName());
-                latestBackup = zipFile;
+                createdBackups.add(zipFile);
 
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to create backup: " + e.getMessage());
@@ -126,6 +127,8 @@ public class makeBackup {
         new deleteBackup(plugin);
 
         //S3にputする部分
-        putObject.uploadToS3(plugin.getConfig(), "backup/" + latestBackup.getName(), latestBackup.toPath());
+        for (File zipFile : createdBackups) {
+            putObject.uploadToS3(plugin.getConfig(), "backup/" ,zipFile.toPath());
+        }
     }
 }
