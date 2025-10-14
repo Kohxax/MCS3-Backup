@@ -7,7 +7,7 @@ Minecraftサーバーのワールドをバックアップし、S3にアップロ
 - バックアップしたものをS3にアップロード（認証情報、on/offを設定可能）
 
 ### インストール方法
-1. [Releases](https://github.con/Kohxax/MCS3-Backup/releases)から最新のjarファイルをダウンロードし、pluginsフォルダに配置する。
+1. [Releases](https://github.com/Kohxax/MCS3-Backup/releases)から最新のjarファイルをダウンロードし、pluginsフォルダに配置する。
 2. サーバーを再起動する。
 3. `plugins/MCS3-Backup/config.yml`を編集し、必要な設定を行う。
 
@@ -58,7 +58,7 @@ A Spigot plugin that can back up Minecraft server worlds and upload them to S3.
 - Upload backups to S3 (authentication and enable/disable configurable)
 
 ### Installation
-1. Download the latest .jar file from [Releases](https://github.con/Kohxax/MCS3-Backup/releases)
+1. Download the latest .jar file from [Releases](https://github.com/Kohxax/MCS3-Backup/releases)
 2. and place it in the plugins folder.
 3. Restart the server. 
 4. Edit plugins/MCS3-Backup/config.yml and configure the settings as needed.
