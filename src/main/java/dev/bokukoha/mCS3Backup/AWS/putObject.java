@@ -29,7 +29,7 @@ public class putObject {
         String bucketName = config.getString("S3.bucket", "your-bucket-name");
         String storageClassName = config.getString("S3.storage-class", "STANDARD");
         String accessKey = config.getString("S3.access-key");
-        String secretKey = config.getString("S3.secret-key");
+        String secretKey = config.getString("S3.secret-access-key");
 
         if (!enableS3) {
             logger.info("S3 upload is disabled in config.yml");
