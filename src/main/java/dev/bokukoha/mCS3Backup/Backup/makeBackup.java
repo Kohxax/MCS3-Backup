@@ -127,8 +127,15 @@ public class makeBackup {
         new deleteBackup(plugin);
 
         //S3にputする部分
+        String prefix = plugin.getConfig().getString("S3.upload-prefix", "backups/");
+
+        if (!prefix.endsWith("/")) {
+            prefix += "/";
+        }
+
         for (File zipFile : createdBackups) {
-            putObject.uploadToS3(plugin.getConfig(), "backup/" ,zipFile.toPath());
+            String objectKey = prefix + zipFile.getName();
+            putObject.uploadToS3(plugin.getConfig(), objectKey, zipFile.toPath());
         }
     }
 }
