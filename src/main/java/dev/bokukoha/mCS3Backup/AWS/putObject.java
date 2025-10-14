@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.StorageClass;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 
 //Javaのやつ
 import java.nio.file.Path;
@@ -47,6 +48,7 @@ public class putObject {
         try (S3Client s3 = S3Client.builder()
                 .region(region)
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                .httpClient(ApacheHttpClient.builder().build())
                 .build()) {
 
             PutObjectRequest request = PutObjectRequest.builder()
