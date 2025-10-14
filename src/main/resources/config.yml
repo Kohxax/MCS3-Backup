@@ -8,9 +8,9 @@ backup-keep-count: 1
 S3:
   enabled: false
   bucket: "your-bucket-name"
-  region: "ap-northeast-1"
-  storage-class: "your-storage-class"
-  upload-prefix: "your-upload-prefix"
+  region: "your-region"
+  storage-class: "storage-class"
+  upload-prefix: "upload-prefix"
 
   access-key: "your-access-key"
   secret-access-key: "your-secret-access-key"
