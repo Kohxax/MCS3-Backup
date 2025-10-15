@@ -2,3 +2,19 @@ name: MCS3-Backup
 version: '1.0-release'
 main: dev.bokukoha.mCS3Backup.MCS3Backup
 api-version: '1.21'
+commands:
+  mcs3:
+    description: Main command for MCS3-Backup plugin
+permission: MCS3Backup.commands.mcs3
+permissions:
+  MCS3Backup.*:
+    description: Grants all permissions for MCS3-Backup
+    default: op
+    children:
+      MCS3Backup:.commands: true
+  MCS3Backup.commands:
+    default: op
+    children:
+      MCS3Backup.commands.mcs3: true
+  MCS3Backup.commands.mcs3:
+    default: op
