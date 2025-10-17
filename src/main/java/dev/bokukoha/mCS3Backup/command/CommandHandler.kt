@@ -6,7 +6,6 @@ import dev.bokukoha.mCS3Backup.Backup.makeBackup
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBackup) : CommandExecutor {
     override fun onCommand(
@@ -62,7 +61,7 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
     }
 
     // reloadコマンド
-    // 実際リロードされてるかは未テスト
+    // うごいた
 
     private fun reloadConfig(sender: CommandSender) {
         plugin.reloadConfig()
@@ -71,7 +70,7 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
         plugin.config.options().copyDefaults(true)
         plugin.saveConfig()
 
-        sender.sendMessage("§a[MCS3-Backup]" + "§fconfig reloaded!")
+        sender.sendMessage("§a[MCS3-Backup]" + " §fconfig reloaded!")
 
         backup.cancelBackupSchedule()
         backup = makeBackup(plugin)
@@ -81,6 +80,7 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
         sender.sendMessage("§f---- §a[MCS3-Backup] §f----")
         sender.sendMessage("§a/mcs3 help §f- Show this help message")
         sender.sendMessage("§a/mcs3 reload §f- Reload the configuration file")
+        sender.sendMessage("§a/mcs3 next §f- Show the next scheduled backup time")
     }
 
     // makeBackupから次回スケジュール呼び出して表示
