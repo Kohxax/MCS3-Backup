@@ -33,8 +33,6 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
 
         when (subCommand) {
             "reload" -> {
-
-                // 未テスト
                 reloadConfig(sender)
             }
 
