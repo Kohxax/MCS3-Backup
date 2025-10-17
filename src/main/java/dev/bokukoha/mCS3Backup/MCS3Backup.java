@@ -19,7 +19,7 @@ public final class MCS3Backup extends JavaPlugin {
         makeBackup backup = new  makeBackup(this);
 
         // コマンドの登録 makeBackupインスタンスの使いまわし用
-        getCommand("mcs3backup").setExecutor(new CommandHandler(this, backup));
+        getCommand("mcs3").setExecutor(new CommandHandler(this, backup));
     }
 
     @Override
