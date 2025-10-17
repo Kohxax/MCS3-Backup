@@ -29,6 +29,9 @@ public class makeBackup {
     private final File worldFolder;
     private final File backupFolder;
 
+    // reloadされた後にタスクをキャンセルするためのID（未テスト）
+    private int backupTaskId = -1;
+
     //コンストラクタ
     public makeBackup(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -43,7 +46,12 @@ public class makeBackup {
     }
 
     //バックアップスケジュール作成
-    private void createBackupSchedule() {
+    public void createBackupSchedule() {
+
+        if (backupTaskId != -1) {
+            plugin.getServer().getScheduler().cancelTask(backupTaskId);
+        }
+
         //バックアップ時間を取得
         String backupTime = plugin.getConfig().getString("backup-time", "0 0 * * *");
 
@@ -63,11 +71,15 @@ public class makeBackup {
         long delayMillis = nextExecution.get().toInstant().toEpochMilli() - System.currentTimeMillis();
         long IntervalMillis = 24 * 60 * 60 * 1000L;
 
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+
+        // ここテストまだ
+        // CommandHandlerでreloadされたときに、既存のスケジューラをキャンセルする用
+
+        backupTaskId = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
             performBackup();
 
             createBackupSchedule();
-        }, delayMillis / 50L); // Bukkitのスケジューラはティック単位なので50で割る
+        }, delayMillis / 50L).getTaskId(); // Bukkitのスケジューラはティック単位なので50で割る
     }
 
     private void performBackup() {
