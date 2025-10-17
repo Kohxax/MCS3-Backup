@@ -28,6 +28,7 @@ public class makeBackup {
     private final JavaPlugin plugin;
     private final File worldFolder;
     private final File backupFolder;
+    private ZonedDateTime nextBackupTime;
 
     // reloadされた後にタスクをキャンセルするためのID（未テスト）
     private int backupTaskId = -1;
@@ -68,10 +69,14 @@ public class makeBackup {
         ZonedDateTime now = ZonedDateTime.now();
         Optional<ZonedDateTime> nextExecution = executionTime.nextExecution(now);
 
+
         if (nextExecution.isEmpty()) {
             plugin.getLogger().warning("Invalid cron expression: " + backupTime);
             return;
         }
+
+        // 次回バックアップスケジュールを保持
+        nextBackupTime = nextExecution.get();
 
         long delayMillis = nextExecution.get().toInstant().toEpochMilli() - System.currentTimeMillis();
         long IntervalMillis = 24 * 60 * 60 * 1000L;
@@ -154,5 +159,9 @@ public class makeBackup {
             String objectKey = prefix + zipFile.getName();
             putObject.uploadToS3(plugin.getConfig(), objectKey, zipFile.toPath());
         }
+    }
+
+    public ZonedDateTime getNextBackupTime() {
+        return nextBackupTime;
     }
 }

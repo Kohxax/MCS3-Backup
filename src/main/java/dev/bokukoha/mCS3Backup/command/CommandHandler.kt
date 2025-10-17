@@ -3,6 +3,10 @@ package dev.bokukoha.mCS3Backup.command
 import org.bukkit.command.*
 import org.bukkit.plugin.java.JavaPlugin
 import dev.bokukoha.mCS3Backup.Backup.makeBackup
+import java.time.Duration
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBackup) : CommandExecutor {
     override fun onCommand(
@@ -35,6 +39,10 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
                 reloadConfig(sender)
             }
 
+            "next" -> {
+                showNextBackupTime(sender)
+            }
+
             "help" -> {
                 helpMassage(sender)
             }
@@ -53,10 +61,8 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
         sender.sendMessage("§a[MCS3-Backup]" + "§fUnknown Command! /mcs3 help for command list")
     }
 
-
     // reloadコマンド
-    // 未テスト reloadでコンフィグを読んだ後にmakeBackupのスケジューラを走らせる処理（予定）
-    // pluginインスタンスの渡しがよくわかってないからたぶん動かない
+    // 実際リロードされてるかは未テスト
 
     private fun reloadConfig(sender: CommandSender) {
         plugin.reloadConfig()
@@ -74,6 +80,28 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
     private fun helpMassage(sender: CommandSender) {
         sender.sendMessage("§f---- §a[MCS3-Backup] §f----")
         sender.sendMessage("§a/mcs3 help §f- Show this help message")
-        sender.sendMessage("/mcs3 reload §f- Reload the configuration file")
+        sender.sendMessage("§a/mcs3 reload §f- Reload the configuration file")
+    }
+
+    // makeBackupから次回スケジュール呼び出して表示
+    private fun showNextBackupTime(sender: CommandSender) {
+        val nextBackupTime = backup.getNextBackupTime()
+
+        // makeBackupでnull弾くようにしてるけど念のため
+        if (nextBackupTime == null) {
+            sender.sendMessage("§a[MCS3-Backup] §fNo backup scheduled.")
+            return
+        }
+
+        val now = ZonedDateTime.now()
+        val duration = Duration.between(now, nextBackupTime)
+
+        val hours = duration.toHours()
+        val minutes = duration.toMinutesPart()
+
+        val formatted = nextBackupTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z"))
+
+        sender.sendMessage("§a[MCS3-Backup] §fNext backup scheduled at: §e$formatted")
+        sender.sendMessage("§a[MCS3-Backup] §fTime remaining: §e$hours hours and $minutes minutes")
     }
 }
