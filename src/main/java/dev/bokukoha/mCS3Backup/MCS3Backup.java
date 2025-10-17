@@ -2,6 +2,7 @@ package dev.bokukoha.mCS3Backup;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import dev.bokukoha.mCS3Backup.Backup.makeBackup;
+import dev.bokukoha.mCS3Backup.command.CommandHandler;
 
 public final class MCS3Backup extends JavaPlugin {
 
@@ -15,7 +16,10 @@ public final class MCS3Backup extends JavaPlugin {
         saveDefaultConfig();
 
         //バックアップ作成、自動削除の呼び出し
-        new makeBackup(this);
+        makeBackup backup = new  makeBackup(this);
+
+        // コマンドの登録 makeBackupインスタンスの使いまわし用
+        getCommand("mcs3backup").setExecutor(new CommandHandler(this, backup));
     }
 
     @Override

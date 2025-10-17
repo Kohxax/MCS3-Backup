@@ -4,7 +4,7 @@ import org.bukkit.command.*
 import org.bukkit.plugin.java.JavaPlugin
 import dev.bokukoha.mCS3Backup.Backup.makeBackup
 
-class CommandHandler(private val plugin: JavaPlugin) : CommandExecutor {
+class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBackup) : CommandExecutor {
     override fun onCommand(
         sender: CommandSender,
         command: Command,
@@ -33,7 +33,6 @@ class CommandHandler(private val plugin: JavaPlugin) : CommandExecutor {
 
                 // 未テスト
                 reloadConfig(sender)
-                sender.sendMessage("§a[MCS3-Backup]" + "§fconfig reloaded!")
             }
 
             "help" -> {
@@ -66,11 +65,15 @@ class CommandHandler(private val plugin: JavaPlugin) : CommandExecutor {
         plugin.config.options().copyDefaults(true)
         plugin.saveConfig()
 
-        makeBackup(plugin)
+        sender.sendMessage("§a[MCS3-Backup]" + "§fconfig reloaded!")
+
+        backup.cancelBackupSchedule()
+        backup = makeBackup(plugin)
     }
 
     private fun helpMassage(sender: CommandSender) {
         sender.sendMessage("§f---- §a[MCS3-Backup] §f----")
-        sender.sendMessage("/mcs3 reload")
+        sender.sendMessage("§a/mcs3 help §f- Show this help message")
+        sender.sendMessage("/mcs3 reload §f- Reload the configuration file")
     }
 }

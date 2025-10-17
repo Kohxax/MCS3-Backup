@@ -45,12 +45,17 @@ public class makeBackup {
         createBackupSchedule();
     }
 
-    //バックアップスケジュール作成
-    public void createBackupSchedule() {
+    // バックアップスケジュールが既にある場合キャンセルしてから再作成
 
+    public void cancelBackupSchedule() {
         if (backupTaskId != -1) {
             plugin.getServer().getScheduler().cancelTask(backupTaskId);
+            backupTaskId = -1;
         }
+    }
+
+    //バックアップスケジュール作成
+    public void createBackupSchedule() {
 
         //バックアップ時間を取得
         String backupTime = plugin.getConfig().getString("backup-time", "0 0 * * *");
