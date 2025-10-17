@@ -95,7 +95,7 @@ public class makeBackup {
     private void performBackup() {
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
 
-        plugin.getServer().broadcastMessage("§a[MCS3-Backup]" + "§fワールドのバックアップを開始します。");
+        plugin.getServer().broadcastMessage("§a[MCS3-Backup]" + "§f Starting backup...");
         plugin.getLogger().info("Starting backup at " + timeStamp);
 
         //ワールドリストをconfigからリスト取得
@@ -143,7 +143,7 @@ public class makeBackup {
             }
         }
 
-        plugin.getServer().broadcastMessage("§a[MCS3-Backup]" + "§fバックアップが正常に完了しました。");
+        plugin.getServer().broadcastMessage("§a[MCS3-Backup]" + " §fbackup completed successfully.");
 
         // 古いバックアップを削除
         new deleteBackup(plugin);
