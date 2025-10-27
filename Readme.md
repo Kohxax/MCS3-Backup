@@ -38,12 +38,20 @@ S3: # S3設定方法については下で解説
 4. 必要に応じて、`storage-class`や`upload-prefix`を設定する。
 5. サーバーを再起動する。
 
+### コマンドとパーミッション( /mcs3 )
+
+mcs3コマンドの全てが`MCS3Backup.commands.mcs3`パーミッションで実行できます。
+
+- reload : `config.yml`の全ての設定項目をリロードします。
+- help : 利用可能なコマンドの一覧を表示します。
+- next : 次のバックアップ予定時刻を表示します。
+
 ### 追加予定機能
 - コマンドで手動バックアップ
-- コマンドによるコンフィグリロード
 - バックアップのリスト表示と削除
 - バックアップのダウンロードリンク生成
 - S3バケット内のバックアップ自動削除
+- ~~コマンドによるコンフィグリロード~~
 
 ### ライセンス
 MCS3-BackupはMITライセンスの下で公開されています。
@@ -59,9 +67,9 @@ A Spigot plugin that can back up Minecraft server worlds and upload them to S3.
 
 ### Installation
 1. Download the latest .jar file from [Releases](https://github.com/Kohxax/MCS3-Backup/releases)
-2. and place it in the plugins folder.
+2. and place it in the `plugins` folder.
 3. Restart the server. 
-4. Edit plugins/MCS3-Backup/config.yml and configure the settings as needed.
+4. Edit `plugins/MCS3-Backup/config.yml` and configure the settings as needed.
 
 ### Configuration
 ```yaml
@@ -90,12 +98,19 @@ secret-access-key: "your-secret-access-key"
 4. Optionally, configure the `storage-class` and `upload-prefix`.
 5. Restart the server.
 
+### Commands and Permissions ( /mcs3 )
+All /mcs3 commands can be executed with the MCS3Backup.commands.mcs3 permission.
+
+- reload : Reloads all configuration items from `config.yml`.
+- help : Displays a list of available commands.
+- next : Shows the scheduled time for the next backup.
+
 ### Planned Features
 - Manual backup via command
-- Reload configuration via command
 - List and delete backups
 - Generate download links for backups
 - Automatic deletion of backups in the S3 bucket
+- ~~Reload configuration via command~~
 
 ### License
 MCS3-Backup is released under the MIT License.
