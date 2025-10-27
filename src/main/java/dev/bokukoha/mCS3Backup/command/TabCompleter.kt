@@ -1,8 +1,8 @@
 package dev.bokukoha.mCS3Backup.command
 
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.command.TabCompleter;
-import org.bukkit.command.Command;
+import org.bukkit.command.TabCompleter
 
 class TabCompleter : TabCompleter{
     override  fun onTabComplete(

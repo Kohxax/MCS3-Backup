@@ -1,9 +1,11 @@
 package dev.bokukoha.mCS3Backup.command
 
-import org.bukkit.command.*
-import org.bukkit.plugin.java.JavaPlugin
-import dev.bokukoha.mCS3Backup.Backup.makeBackup
 import dev.bokukoha.mCS3Backup.AWS.putObject
+import dev.bokukoha.mCS3Backup.Backup.makeBackup
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter

@@ -1,9 +1,10 @@
 package dev.bokukoha.mCS3Backup;
 
 import dev.bokukoha.mCS3Backup.AWS.putObject;
-import org.bukkit.plugin.java.JavaPlugin;
 import dev.bokukoha.mCS3Backup.Backup.makeBackup;
-import dev.bokukoha.mCS3Backup.command.*;
+import dev.bokukoha.mCS3Backup.command.CommandHandler;
+import dev.bokukoha.mCS3Backup.command.TabCompleter;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MCS3Backup extends JavaPlugin {
 
@@ -13,13 +14,13 @@ public final class MCS3Backup extends JavaPlugin {
         getLogger().info("MCS3Backup is now enabled!");
         getLogger().info("Backup will be created according to the schedule via config.yml.");
 
-        //デフォルトコンフィグのロード
+        // デフォルトコンフィグのロード
         saveDefaultConfig();
 
         // AWSコンフィグのロード
         putObject.loadAWSConfig(getConfig());
 
-        //バックアップ作成、自動削除の呼び出し
+        // バックアップ作成、自動削除の呼び出し
         makeBackup backup = new  makeBackup(this);
 
         // コマンドの登録 makeBackupインスタンスの使いまわし用

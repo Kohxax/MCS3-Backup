@@ -1,16 +1,15 @@
 package dev.bokukoha.mCS3Backup.Backup;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-import dev.bokukoha.mCS3Backup.AWS.putObject;
-
 import com.cronutils.model.Cron;
+import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
-import com.cronutils.model.definition.CronDefinitionBuilder;
+import dev.bokukoha.mCS3Backup.AWS.putObject;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import static com.cronutils.model.CronType.UNIX;
-
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -19,9 +18,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static com.cronutils.model.CronType.UNIX;
 
 public class makeBackup {
 
@@ -29,11 +29,9 @@ public class makeBackup {
     private final File worldFolder;
     private final File backupFolder;
     private ZonedDateTime nextBackupTime;
-
-    // reloadされた後にタスクをキャンセルするためのID（未テスト）
     private int backupTaskId = -1;
 
-    //コンストラクタ
+    // コンストラクタ
     public makeBackup(JavaPlugin plugin) {
         this.plugin = plugin;
         this.worldFolder = new File(plugin.getServer().getWorldContainer(), "world");
@@ -47,7 +45,6 @@ public class makeBackup {
     }
 
     // バックアップスケジュールが既にある場合キャンセルしてから再作成
-
     public void cancelBackupSchedule() {
         if (backupTaskId != -1) {
             plugin.getServer().getScheduler().cancelTask(backupTaskId);
@@ -55,13 +52,13 @@ public class makeBackup {
         }
     }
 
-    //バックアップスケジュール作成
+    // バックアップスケジュール作成
     public void createBackupSchedule() {
 
-        //バックアップ時間を取得
+        // バックアップ時間を取得
         String backupTime = plugin.getConfig().getString("backup-time", "0 0 * * *");
 
-        //CronParserを作成
+        // CronParserを作成
         CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(UNIX));
         Cron cron = parser.parse(backupTime);
         ExecutionTime executionTime = ExecutionTime.forCron(cron);
@@ -80,10 +77,6 @@ public class makeBackup {
 
         long delayMillis = nextExecution.get().toInstant().toEpochMilli() - System.currentTimeMillis();
         long IntervalMillis = 24 * 60 * 60 * 1000L;
-
-
-        // ここテストまだ
-        // CommandHandlerでreloadされたときに、既存のスケジューラをキャンセルする用
 
         backupTaskId = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
             performBackup();
@@ -148,7 +141,7 @@ public class makeBackup {
         // 古いバックアップを削除
         new deleteBackup(plugin);
 
-        //S3にputする部分
+        // S3にputする部分
         String prefix = plugin.getConfig().getString("S3.upload-prefix", "backups/");
 
         if (!prefix.endsWith("/")) {

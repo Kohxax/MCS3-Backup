@@ -21,7 +21,7 @@ public class deleteBackup {
         deleteOldBackups();
     }
 
-    //backupフォルダ内の古いバックアップを削除（カスタム）
+    // backupフォルダ内の古いバックアップを削除（カスタム）
     private void deleteOldBackups() {
         File[] backups = backupFolder.listFiles((dir, name) -> name.endsWith(".zip"));
 
@@ -52,7 +52,7 @@ public class deleteBackup {
             for (int i = 0; i < files.size(); i++) {
                 File oldfile = files.get(i);
 
-                //configから保持するバックアップの数を取得
+                // configから保持するバックアップの数を取得
                 int keepCount = plugin.getConfig().getInt("backup-keep-count", 1);
 
                 if (i >= keepCount) {
