@@ -22,15 +22,22 @@ import java.nio.file.Path;
 public class putObject {
     public static final Logger logger = LoggerFactory.getLogger(putObject.class);
 
-    public static void uploadToS3(FileConfiguration config, String objectKey, Path filePath) {
+    private static boolean enableS3;
+    private static String regionName;
+    private static String bucketName;
+    private static String storageClassName;
+    private static String accessKey;
+    private static String secretKey;
 
+    // reload時に呼ぶ
+    public static void loadAWSConfig(FileConfiguration config) {
         // config.ymlから設定を取得
-        boolean enableS3 = config.getBoolean("S3.enabled", false);
-        String regionName = config.getString("S3.region", "ap-northeast-1");
-        String bucketName = config.getString("S3.bucket", "your-bucket-name");
-        String storageClassName = config.getString("S3.storage-class", "STANDARD");
-        String accessKey = config.getString("S3.access-key");
-        String secretKey = config.getString("S3.secret-access-key");
+        enableS3 = config.getBoolean("S3.enabled", false);
+        regionName = config.getString("S3.region", "ap-northeast-1");
+        bucketName = config.getString("S3.bucket", "your-bucket-name");
+        storageClassName = config.getString("S3.storage-class", "STANDARD");
+        accessKey = config.getString("S3.access-key");
+        secretKey = config.getString("S3.secret-access-key");
 
         if (!enableS3) {
             logger.info("S3 upload is disabled in config.yml");
@@ -41,6 +48,11 @@ public class putObject {
             logger.error("S3 configuration is missing in config.yml");
             return;
         }
+
+        logger.info("S3 configuration loaded successfully");
+    }
+
+    public static void uploadToS3(FileConfiguration config, String objectKey, Path filePath) {
 
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
         Region region = Region.of(regionName);

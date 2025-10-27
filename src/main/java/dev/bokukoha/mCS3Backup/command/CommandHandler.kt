@@ -3,6 +3,7 @@ package dev.bokukoha.mCS3Backup.command
 import org.bukkit.command.*
 import org.bukkit.plugin.java.JavaPlugin
 import dev.bokukoha.mCS3Backup.Backup.makeBackup
+import dev.bokukoha.mCS3Backup.AWS.putObject
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -58,9 +59,6 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
         sender.sendMessage("§a[MCS3-Backup]" + "§fUnknown Command! /mcs3 help for command list")
     }
 
-    // reloadコマンド
-    // うごいた
-
     private fun reloadConfig(sender: CommandSender) {
         plugin.reloadConfig()
         plugin.saveDefaultConfig()
@@ -68,10 +66,13 @@ class CommandHandler(private val plugin: JavaPlugin, private var backup: makeBac
         plugin.config.options().copyDefaults(true)
         plugin.saveConfig()
 
-        sender.sendMessage("§a[MCS3-Backup]" + " §fconfig reloaded!")
+        // AWS設定再読み込み 未テスト
+        putObject.loadAWSConfig(plugin.config)
 
         backup.cancelBackupSchedule()
         backup = makeBackup(plugin)
+
+        sender.sendMessage("§a[MCS3-Backup]" + " §fconfig reloaded!")
     }
 
     private fun helpMassage(sender: CommandSender) {
