@@ -39,11 +39,6 @@ public class putObject {
         accessKey = config.getString("S3.access-key");
         secretKey = config.getString("S3.secret-access-key");
 
-        if (!enableS3) {
-            logger.info("S3 upload is disabled in config.yml");
-            return;
-        }
-
         if (accessKey == null || secretKey == null) {
             logger.error("S3 configuration is missing in config.yml");
             return;
@@ -53,6 +48,11 @@ public class putObject {
     }
 
     public static void uploadToS3(FileConfiguration config, String objectKey, Path filePath) {
+
+        if (!enableS3) {
+            logger.info("S3 upload skipped because S3 is disabled in config.");
+            return;
+        }
 
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
         Region region = Region.of(regionName);
